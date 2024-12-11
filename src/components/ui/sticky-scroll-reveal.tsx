@@ -12,11 +12,15 @@ export const StickyScroll = ({
   }[];
 }) => {
   const [activeCard, setActiveCard] = React.useState(0);
-  const ref = useRef<any>(null);
+
+  // Explicitly define the type for ref
+  const ref = useRef<HTMLDivElement>(null);
+
   const { scrollYProgress } = useScroll({
     container: ref,
     offset: ["start start", "end start"],
   });
+
   const cardLength = content.length;
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
@@ -38,13 +42,14 @@ export const StickyScroll = ({
     "linear-gradient(to bottom right, var(--pink-500), var(--indigo-500))",
     "linear-gradient(to bottom right, var(--orange-500), var(--yellow-500))",
   ];
+
   return (
     <motion.div
       animate={{
         backgroundColor: backgroundColors[activeCard % backgroundColors.length],
       }}
       className="h-[30rem] overflow-y-auto flex justify-center relative space-x-10 rounded-md p-10"
-      ref={ref}
+      ref={ref} // Use the typed ref here
     >
       <div className="div relative flex items-start px-4">
         <div className="max-w-2xl">

@@ -18,7 +18,7 @@ interface ButtonProps {
   borderClassName?: string;
   duration?: number;
   className?: string;
-  [key: string]: any;
+  [key: string]: unknown; // Allow other props without using `any`
 }
 
 export function Button({
@@ -76,7 +76,7 @@ interface MovingBorderProps {
   duration?: number;
   rx?: string;
   ry?: string;
-  [key: string]: any;
+  [key: string]: unknown; // Allow other props without using `any`
 }
 
 export const MovingBorder = ({
@@ -87,7 +87,7 @@ export const MovingBorder = ({
   ...otherProps
 }: MovingBorderProps) => {
   const pathRef = useRef<SVGRectElement | null>(null);
-  const progress = useMotionValue<number>(0);
+  const progress = useMotionValue(0); // Explicitly typed as `number`
 
   useAnimationFrame((time) => {
     if (pathRef.current) {
@@ -99,10 +99,10 @@ export const MovingBorder = ({
     }
   });
 
-  const x = useTransform(progress, (val) =>
+  const x = useTransform(progress, (val: number) =>
     pathRef.current ? pathRef.current.getPointAtLength(val).x : 0
   );
-  const y = useTransform(progress, (val) =>
+  const y = useTransform(progress, (val: number) =>
     pathRef.current ? pathRef.current.getPointAtLength(val).y : 0
   );
 
