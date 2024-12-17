@@ -1,27 +1,42 @@
 'use client';
 
-import React, { FormEvent, useState } from 'react';
+import React, { useState } from 'react';
 import { BackgroundBeams } from '@/components/ui/background-beams';
 
 function MusicSchoolContactUs() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log('Submitted:', { email, message });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true); // Start submission process
+
+    try {
+      // Send data using fetch to FormSubmit endpoint
+      await fetch('https://formsubmit.co/ajax/mr.shehzad457@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email,
+          message: message,
+        }),
+      });
+
+      // Clear the form fields after successful submission
+      setEmail('');
+      setMessage('');
+    } catch (error) {
+      console.error('Submission error:', error);
+    } finally {
+      setIsSubmitting(false); // Stop submission process
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-12 pt-36 relative">
-      {' '}
-      {/* Ensure the container is relative */}
-      {/* BackgroundBeams with adjusted z-index */}
       <BackgroundBeams className="absolute top-0 left-0 w-full h-full z-0" />
-      {/* Content with higher z-index */}
       <div className="max-w-2xl mx-auto p-4 relative z-10">
-        {' '}
-        {/* Add relative and z-10 to bring content to the front */}
         <h1 className="text-lg md:text-7xl text-center font-sans font-bold mb-8 text-white">
           Contact Us
         </h1>
@@ -49,9 +64,10 @@ function MusicSchoolContactUs() {
           ></textarea>
           <button
             type="submit"
-            className="px-6 py-2 rounded-lg bg-teal-500 text-white font-medium hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+            className="px-6 py-2 rounded-lg bg-teal-500 text-white font-medium hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 disabled:opacity-50"
+            disabled={isSubmitting}
           >
-            Send Message
+            {isSubmitting ? 'Sending...' : 'Send Message'}
           </button>
         </form>
       </div>
