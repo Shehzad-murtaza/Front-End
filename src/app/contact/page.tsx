@@ -59,7 +59,7 @@ const MusicSchoolContactUs: React.FC = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="Your email address"
+            placeholder="Your email address or number"
             className="rounded-lg border border-neutral-800 focus:ring-2 focus:ring-teal-500 w-full p-4 bg-neutral-950 placeholder:text-neutral-700"
             required
           />
