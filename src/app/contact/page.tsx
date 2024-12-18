@@ -1,35 +1,43 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
+import React, { useState, FormEvent, ChangeEvent, KeyboardEvent } from 'react';
 import { BackgroundBeams } from '@/components/ui/background-beams';
 
-function MusicSchoolContactUs() {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+const MusicSchoolContactUs: React.FC = () => {
+  const [formData, setFormData] = useState({ email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleChange = ({ target: { name, value } }: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true); // Start submission process
+    setIsSubmitting(true);
 
     try {
-      // Send data using fetch to FormSubmit endpoint
-      await fetch('https://formsubmit.co/ajax/mr.shehzad457@gmail.com', {
+      const response = await fetch('https://formsubmit.co/ajax/mr.shehzad457@gmail.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: email,
-          message: message,
-        }),
+        body: JSON.stringify(formData),
       });
 
-      // Clear the form fields after successful submission
-      setEmail('');
-      setMessage('');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      setFormData({ email: '', message: '' });
     } catch (error) {
       console.error('Submission error:', error);
     } finally {
-      setIsSubmitting(false); // Stop submission process
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleKeyPress = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      document.querySelector('form')?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
     }
   };
 
@@ -48,15 +56,18 @@ function MusicSchoolContactUs() {
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
             placeholder="Your email address"
             className="rounded-lg border border-neutral-800 focus:ring-2 focus:ring-teal-500 w-full p-4 bg-neutral-950 placeholder:text-neutral-700"
             required
           />
           <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            name="message"
+            value={formData.message}
+            onChange={handleChange}
+            onKeyDown={handleKeyPress}
             placeholder="Your message"
             className="rounded-lg border border-neutral-800 focus:ring-2 focus:ring-teal-500 w-full p-4 bg-neutral-950 placeholder:text-neutral-700"
             rows={5}
@@ -73,6 +84,6 @@ function MusicSchoolContactUs() {
       </div>
     </div>
   );
-}
+};
 
 export default MusicSchoolContactUs;
